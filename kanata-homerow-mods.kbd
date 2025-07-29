@@ -1,0 +1,75 @@
+;; Homerow mods configuration with symbols layer
+;; Mapping (mirror pairs):
+;; - a, ; = ctrl
+;; - s, l = alt
+;; - d, k = super/meta
+;; - f, j = shift
+
+(defcfg
+  process-unmapped-keys yes
+  concurrent-tap-hold yes
+)
+
+(defsrc
+  esc  f1   f2   f3   f4   f5   f6   f7   f8   f9   f10  f11  f12
+  grv  1    2    3    4    5    6    7    8    9    0    -    =    bspc
+  tab  q    w    e    r    t    y    u    i    o    p    [    ]    \
+  caps a    s    d    f    g    h    j    k    l    ;    '    ret
+  lsft z    x    c    v    b    n    m    ,    .    /    rsft
+  lctl lmet lalt           spc            ralt rmet rctl
+)
+
+(defvar
+  ;; Timing parameters
+  tap-timeout 200
+  hold-timeout 150  ;; Reduced for faster mod activation
+  
+  ;; Keys on same hand that trigger early tap
+  ;; EXCLUDING homerow mod keys so they can combine smoothly
+  left-hand-keys (
+    q w e r t
+    g  ;; excluding a s d f
+    z x c v b
+  )
+  
+  right-hand-keys (
+    y u i o p
+    h  ;; excluding j k l ;
+    n m , . /
+  )
+)
+
+(defalias
+  ;; Left hand homerow mods
+  a (tap-hold-release-keys $tap-timeout $hold-timeout a lctl $left-hand-keys)
+  s (tap-hold-release-keys $tap-timeout $hold-timeout s lalt $left-hand-keys)
+  d (tap-hold-release-keys $tap-timeout $hold-timeout d lmet $left-hand-keys)
+  f (tap-hold-release-keys $tap-timeout $hold-timeout f lsft $left-hand-keys)
+  
+  ;; Right hand homerow mods (matching pairs)
+  j (tap-hold-release-keys $tap-timeout $hold-timeout j rsft $right-hand-keys)
+  k (tap-hold-release-keys $tap-timeout $hold-timeout k rmet $right-hand-keys)
+  l (tap-hold-release-keys $tap-timeout $hold-timeout l ralt $right-hand-keys)
+  ; (tap-hold-release-keys $tap-timeout $hold-timeout ; rctl $right-hand-keys)
+  
+  ;; Left Alt key: tap for alt, hold for symbols layer
+  sym (tap-hold 200 200 lalt (layer-while-held symbols))
+)
+
+(deflayer base
+  esc  f1   f2   f3   f4   f5   f6   f7   f8   f9   f10  f11  f12
+  grv  1    2    3    4    5    6    7    8    9    0    -    =    bspc
+  tab  q    w    e    r    t    y    u    i    o    p    [    ]    \
+  caps @a   @s   @d   @f   g    h    @j   @k   @l   @;   '    ret
+  lsft z    x    c    v    b    n    m    ,    .    /    rsft
+  lctl lmet @sym           spc            ralt rmet rctl
+)
+
+(deflayer symbols
+  esc  f1   f2   f3   f4   f5   f6   f7   f8   f9   f10  f11  f12  
+  _    _    _    _    _    _    _    _    _    _    _    _    _    _
+  _    grv  S-grv \    S-min S-7  S-8  -    /    S-\  ;    _    _    _
+  del  S-,  S-[  [    S-9  S-4  S-1  S-0  ]    S-]  S-.  _    _
+  _    _    _    S-5  S-=  S-2  S-6  =    S-3  _    _    _
+  _    _    _              _              _    _    _
+)
